@@ -89,6 +89,11 @@ struct _XfceDesktopPriv
 
     XfconfChannel *channel;
     gchar *property_prefix;
+
+    XfceDesktopButton menu_button;
+    XfceDesktopModifier menu_modifier;
+    XfceDesktopButton secondary_menu_button;
+    XfceDesktopModifier secondary_menu_modifier;
     
     GdkPixmap *bg_pixmap;
     
@@ -120,6 +125,10 @@ enum
 {
     PROP_0 = 0,
     PROP_XINERAMA_STRETCH,
+    PROP_MENU_BUTTON,
+    PROP_MENU_MODIFIER,
+    PROP_SECONDARY_MENU_BUTTON,
+    PROP_SECONDARY_MENU_MODIFIER,
 #ifdef ENABLE_DESKTOP_ICONS
     PROP_ICON_STYLE,
     PROP_ICON_SIZE,
@@ -574,6 +583,36 @@ xfce_desktop_class_init(XfceDesktopClass *klass)
                                                          FALSE,
                                                          XFDESKTOP_PARAM_FLAGS));
 
+    g_object_class_install_property(gobject_class, PROP_MENU_BUTTON,
+                                    g_param_spec_enum("menu-button",
+                                                      "menu button",
+                                                      "menu button",
+                                                      XFCE_TYPE_DESKTOP_BUTTON,
+                                                      XFCE_DESKTOP_BUTTON_RIGHT,
+                                                      XFDESKTOP_PARAM_FLAGS));
+    g_object_class_install_property(gobject_class, PROP_MENU_MODIFIER,
+                                    g_param_spec_enum("menu-modifier",
+                                                      "menu modifier",
+                                                      "menu modifier",
+                                                      XFCE_TYPE_DESKTOP_MODIFIER,
+                                                      0,
+                                                      XFDESKTOP_PARAM_FLAGS));
+
+    g_object_class_install_property(gobject_class, PROP_SECONDARY_MENU_BUTTON,
+                                    g_param_spec_enum("secondary-menu-button",
+                                                      "secondary menu button",
+                                                      "secondary menu button",
+                                                      XFCE_TYPE_DESKTOP_BUTTON,
+                                                      XFCE_DESKTOP_BUTTON_MIDDLE,
+                                                      XFDESKTOP_PARAM_FLAGS));
+    g_object_class_install_property(gobject_class, PROP_SECONDARY_MENU_MODIFIER,
+                                    g_param_spec_enum("secondary-menu-modifier",
+                                                      "secondary menu modifier",
+                                                      "secondary menu modifier",
+                                                      XFCE_TYPE_DESKTOP_MODIFIER,
+                                                      0,
+                                                      XFDESKTOP_PARAM_FLAGS));
+
 #ifdef ENABLE_DESKTOP_ICONS
     g_object_class_install_property(gobject_class, PROP_ICON_STYLE,
                                     g_param_spec_enum("icon-style",
@@ -647,6 +686,22 @@ xfce_desktop_set_property(GObject *object,
                                               g_value_get_boolean(value));
             break;
 
+        case PROP_MENU_BUTTON:
+            desktop->priv->menu_button = g_value_get_enum(value);
+            break;
+
+        case PROP_MENU_MODIFIER:
+            desktop->priv->menu_modifier = g_value_get_enum(value);
+            break;
+
+        case PROP_SECONDARY_MENU_BUTTON:
+            desktop->priv->secondary_menu_button = g_value_get_enum(value);
+            break;
+
+        case PROP_SECONDARY_MENU_MODIFIER:
+            desktop->priv->secondary_menu_modifier = g_value_get_enum(value);
+            break;
+
 #ifdef ENABLE_DESKTOP_ICONS
         case PROP_ICON_STYLE:
             xfce_desktop_set_icon_style(desktop,
@@ -686,6 +741,22 @@ xfce_desktop_get_property(GObject *object,
     switch(property_id) {
         case PROP_XINERAMA_STRETCH:
             g_value_set_boolean(value, desktop->priv->xinerama_stretch);
+            break;
+
+        case PROP_MENU_BUTTON:
+            g_value_set_enum(value, desktop->priv->menu_button);
+            break;
+
+        case PROP_MENU_MODIFIER:
+            g_value_set_enum(value, desktop->priv->menu_modifier);
+            break;
+
+        case PROP_SECONDARY_MENU_BUTTON:
+            g_value_set_enum(value, desktop->priv->secondary_menu_button);
+            break;
+
+        case PROP_SECONDARY_MENU_MODIFIER:
+            g_value_set_enum(value, desktop->priv->secondary_menu_modifier);
             break;
 
 #ifdef ENABLE_DESKTOP_ICONS
@@ -845,28 +916,57 @@ xfce_desktop_unrealize(GtkWidget *widget)
     GTK_WIDGET_UNSET_FLAGS(widget, GTK_REALIZED);
 }
 
+static inline GdkModifierType
+enum_to_modmask(XfceDesktopModifier modifier)
+{
+    switch(modifier) {
+        case XFCE_DESKTOP_MOD_NONE:
+            return 0;
+        case XFCE_DESKTOP_MOD_SHIFT:
+            return GDK_SHIFT_MASK;
+        case XFCE_DESKTOP_MOD_ALT:
+            return GDK_MOD1_MASK|GDK_META_MASK;
+        case XFCE_DESKTOP_MOD_CONTROL:
+            return GDK_CONTROL_MASK;
+        case XFCE_DESKTOP_MOD_SUPER:
+            return GDK_SUPER_MASK|GDK_MOD4_MASK;
+        default:
+            return 0;
+    }
+}
+
 static gboolean
 xfce_desktop_button_press_event(GtkWidget *w,
                                 GdkEventButton *evt)
 {
+#define ALLOWED_MASK  (GDK_SHIFT_MASK |GDK_MOD1_MASK | GDK_META_MASK \
+                       | GDK_CONTROL_MASK | GDK_SUPER_MASK | GDK_MOD4_MASK)
+    XfceDesktop *desktop = XFCE_DESKTOP(w);
     guint button = evt->button;
-    guint state = evt->state;
-    
+    GdkModifierType state = (evt->state & ALLOWED_MASK);
+    GdkModifierType state1 = enum_to_modmask(desktop->priv->menu_modifier);
+    GdkModifierType state2 = enum_to_modmask(desktop->priv->secondary_menu_modifier);
+
+    DBG("click modmask: 0x%08x", state);
     if(evt->type == GDK_BUTTON_PRESS) {
-        if(button == 2 || (button == 1 && (state & GDK_SHIFT_MASK)
-                           && (state & GDK_CONTROL_MASK)))
+        if(desktop->priv->secondary_menu_button + 1 == button
+           && !(state & ~state2) && ((state & state2) || (state == state2)))
         {
-            xfce_desktop_popup_secondary_root_menu(XFCE_DESKTOP(w),
+            xfce_desktop_popup_secondary_root_menu(desktop,
                                                    button, evt->time);
             return TRUE;
-        } else if(button == 3 || (button == 1 && (state & GDK_SHIFT_MASK))) {
-            xfce_desktop_popup_root_menu(XFCE_DESKTOP(w),
+        } else if(desktop->priv->menu_button + 1 == button
+                  && !(state & ~state1) && ((state & state1)
+                                            || (state == state1)))
+        {
+            xfce_desktop_popup_root_menu(desktop,
                                          button, evt->time);
             return TRUE;
         }
     }
     
     return FALSE;
+#undef ALLOWED_MASK
 }
 
 static gboolean
@@ -950,6 +1050,20 @@ xfce_desktop_connect_settings(XfceDesktop *desktop)
     g_strlcat(buf, "xinerama-stretch", sizeof(buf));
     xfconf_g_property_bind(channel, buf, G_TYPE_BOOLEAN,
                            G_OBJECT(desktop), "xinerama-stretch");
+
+    xfconf_g_property_bind(channel, "/desktop-menu/activate-button",
+                           G_TYPE_INT,
+                           G_OBJECT(desktop), "menu-button");
+    xfconf_g_property_bind(channel, "/desktop-menu/activate-modifier",
+                           G_TYPE_INT,
+                           G_OBJECT(desktop), "menu-modifier");
+
+    xfconf_g_property_bind(channel, "/windowlist-menu/activate-button",
+                           G_TYPE_INT,
+                           G_OBJECT(desktop), "secondary-menu-button");
+    xfconf_g_property_bind(channel, "/windowlist-menu/activate-modifier",
+                           G_TYPE_INT,
+                           G_OBJECT(desktop), "secondary-menu-modifier");
 
 #ifdef ENABLE_DESKTOP_ICONS
 #define ICONS_PREFIX "/desktop-icons/"

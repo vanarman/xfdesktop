@@ -48,6 +48,22 @@ typedef enum
     XFCE_DESKTOP_ICON_STYLE_FILES,
 } XfceDesktopIconStyle;
 
+typedef enum
+{
+    XFCE_DESKTOP_BUTTON_LEFT = 0,
+    XFCE_DESKTOP_BUTTON_MIDDLE,
+    XFCE_DESKTOP_BUTTON_RIGHT,
+} XfceDesktopButton;
+
+typedef enum
+{
+    XFCE_DESKTOP_MOD_NONE = 0,
+    XFCE_DESKTOP_MOD_SHIFT,
+    XFCE_DESKTOP_MOD_ALT,
+    XFCE_DESKTOP_MOD_CONTROL,
+    XFCE_DESKTOP_MOD_SUPER,
+} XfceDesktopModifier;
+
 struct _XfceDesktop
 {
     GtkWindow window;

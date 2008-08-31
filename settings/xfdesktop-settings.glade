@@ -594,14 +594,14 @@ Transparent</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="label" translatable="yes">_Button:</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="mnemonic_widget">combobox1</property>
+                                                <property name="mnemonic_widget">combo_menu_btn</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <widget class="GtkComboBox" id="combobox1">
+                                              <widget class="GtkComboBox" id="combo_menu_btn">
                                                 <property name="visible">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="items" translatable="yes">Left
@@ -619,7 +619,7 @@ Right</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="label" translatable="yes">Mo_difier:</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="mnemonic_widget">combobox2</property>
+                                                <property name="mnemonic_widget">combo_menu_modifier</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -627,13 +627,14 @@ Right</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <widget class="GtkComboBox" id="combobox2">
+                                              <widget class="GtkComboBox" id="combo_menu_modifier">
                                                 <property name="visible">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="items" translatable="yes">None
 Shift
 Alt
-Control</property>
+Control
+Super</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -749,6 +750,7 @@ Control</property>
                                         <property name="spacing">6</property>
                                         <child>
                                           <widget class="GtkHBox" id="hbox14">
+                                            <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="spacing">12</property>
                                             <child>
@@ -757,14 +759,14 @@ Control</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="label" translatable="yes">B_utton:</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="mnemonic_widget">combobox8</property>
+                                                <property name="mnemonic_widget">combo_windowlist_btn</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <widget class="GtkComboBox" id="combobox8">
+                                              <widget class="GtkComboBox" id="combo_windowlist_btn">
                                                 <property name="visible">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="items" translatable="yes">Left
@@ -782,7 +784,7 @@ Right</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="label" translatable="yes">Modi_fier:</property>
                                                 <property name="use_underline">True</property>
-                                                <property name="mnemonic_widget">combobox9</property>
+                                                <property name="mnemonic_widget">combo_windowlist_modifier</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>
@@ -790,13 +792,14 @@ Right</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <widget class="GtkComboBox" id="combobox9">
+                                              <widget class="GtkComboBox" id="combo_windowlist_modifier">
                                                 <property name="visible">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="items" translatable="yes">None
 Shift
 Alt
-Control</property>
+Control
+Super</property>
                                               </widget>
                                               <packing>
                                                 <property name="expand">False</property>

@@ -59,8 +59,12 @@
 #define SHOW_DESKTOP_MENU_PROP               "/desktop-menu/show"
 #define DESKTOP_MENU_SHOW_ICONS_PROP         "/desktop-menu/show-icons"
 
+#define DESKTOP_MENU_BUTTON_PROP             "/desktop-menu/activate-button"
+#define DESKTOP_MENU_MODIFIER_PROP           "/desktop-menu/activate-modifier"
+
 #define WINLIST_SHOW_WINDOWS_MENU_PROP       "/windowlist-menu/show"
-#define WINLIST_SHOW_APP_ICONS_PROP          "/windowlist-menu/show-icons"
+#define WINLIST_BUTTON_PROP                  "/windowlist-menu/activate-button"
+#define WINLIST_MODIFIER_PROP                "/windowlist-menu/activate-modifier"
 #define WINLIST_SHOW_STICKY_WIN_ONCE_PROP    "/windowlist-menu/show-sticky-once"
 #define WINLIST_SHOW_WS_NAMES_PROP           "/windowlist-menu/show-workspace-names"
 #define WINLIST_SHOW_WS_SUBMENUS_PROP        "/windowlist-menu/show-submenus"
@@ -1420,10 +1424,30 @@ xfdesktop_settings_dialog_new(GladeXML *main_gxml,
                      G_CALLBACK(suboptions_set_sensitive), box);
     suboptions_set_sensitive(GTK_TOGGLE_BUTTON(w), box);
 
+    w = glade_xml_get_widget(main_gxml, "combo_menu_btn");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), 2);
+    xfconf_g_property_bind(channel, DESKTOP_MENU_BUTTON_PROP, G_TYPE_INT,
+                           G_OBJECT(w), "active");
+
+    w = glade_xml_get_widget(main_gxml, "combo_menu_modifier");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), 0);
+    xfconf_g_property_bind(channel, DESKTOP_MENU_MODIFIER_PROP, G_TYPE_INT,
+                           G_OBJECT(w), "active");
+
     xfconf_g_property_bind(channel, WINLIST_SHOW_APP_ICONS_PROP, G_TYPE_BOOLEAN,
                            G_OBJECT(glade_xml_get_widget(main_gxml,
                                                          "chk_winlist_show_app_icons")),
                            "active");
+
+    w = glade_xml_get_widget(main_gxml, "combo_windowlist_btn");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), 1);
+    xfconf_g_property_bind(channel, WINLIST_BUTTON_PROP, G_TYPE_INT,
+                           G_OBJECT(w), "active");
+
+    w = glade_xml_get_widget(main_gxml, "combo_windowlist_modifier");
+    gtk_combo_box_set_active(GTK_COMBO_BOX(w), 0);
+    xfconf_g_property_bind(channel, WINLIST_MODIFIER_PROP, G_TYPE_INT,
+                           G_OBJECT(w), "active");
 
     xfconf_g_property_bind(channel, WINLIST_SHOW_STICKY_WIN_ONCE_PROP,
                            G_TYPE_BOOLEAN,
