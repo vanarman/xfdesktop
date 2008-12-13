@@ -167,7 +167,42 @@ struct _XfdesktopIconViewPrivate
     gdouble cell_text_width_proportion;
 
     gboolean ellipsize_icon_labels;
+
+    GSList *cells;
 };
+
+typedef struct
+{
+    GtkCellRenderer *render;
+    gboolean expand;
+    GtkPackType pack;
+} CellInfo;
+
+static void xfdesktop_icon_view_cell_layout_init(GtkCellLayoutIface *iface);
+
+static void xfdesktop_icon_view_cell_pack_start(GtkCellLayout *cell_layout,
+                                                GtkCellRenderer *cell,
+                                                gboolean expand);
+static void xfdesktop_icon_view_cell_pack_end(GtkCellLayout *cell_layout,
+                                              GtkCellRenderer *cell,
+                                              gboolean expand);
+static void xfdesktop_icon_view_cell_clear(GtkCellLayout *cell_layout);
+static void xfdesktop_icon_view_cell_add_attribute(GtkCellLayout *cell_layout,
+                                                   GtkCellRenderer *cell,
+                                                   const gchar *attribute,
+                                                   gint column);
+static void xfdesktop_icon_view_cell_set_cell_data_func(GtkCellLayout *cell_layout,
+                                                        GtkCellRenderer *cell,
+                                                        GtkCellLayoutDataFunc func,
+                                                        gpointer func_data,
+                                                        GDestroyNotify destroy);
+static void xfdesktop_icon_view_cell_clear_attributes(GtkCellLayout *cell_layout,
+                                                      GtkCellRenderer *cell);
+static void xfdesktop_icon_view_cell_reorder(GtkCellLayout *cell_layout,
+                                             GtkCellRenderer *cell,
+                                             gint position);
+static GList *xfdesktop_icon_view_cell_get_cells(GtkCellLayout *cell_layout);
+
 
 static gboolean xfdesktop_icon_view_button_press(GtkWidget *widget,
                                                  GdkEventButton *evt,
@@ -332,7 +367,9 @@ static guint __signals[SIG_N_SIGNALS] = { 0, };
 static GQuark xfdesktop_cell_highlight_quark = 0;
 
 
-G_DEFINE_TYPE(XfdesktopIconView, xfdesktop_icon_view, GTK_TYPE_WIDGET)
+G_DEFINE_TYPE_WITH_CODE(XfdesktopIconView, xfdesktop_icon_view, GTK_TYPE_WIDGET,
+                        G_IMPLEMENT_INTERFACE(GTK_TYPE_CELL_LAYOUT,
+                                              xfdesktop_icon_view_cell_layout_init))
 
 
 static void
@@ -583,6 +620,19 @@ xfdesktop_icon_view_class_init(XfdesktopIconViewClass *klass)
                                          GTK_MOVEMENT_VISUAL_POSITIONS, -1);
 
     xfdesktop_cell_highlight_quark = g_quark_from_static_string("xfdesktop-icon-view-cell-highlight");
+}
+
+static void
+xfdesktop_icon_view_cell_layout_init(GtkCellLayoutIface *iface)
+{
+    iface->pack_start = xfdesktop_icon_view_cell_pack_start;
+    iface->pack_end = xfdesktop_icon_view_cell_pack_end;
+    iface->clear = xfdesktop_icon_view_cell_clear;
+    iface->add_attribute = xfdesktop_icon_biew_cell_add_attribute;
+    iface->set_cell_data_func = xfdesktop_icon_view_cell_set_cell_data_func;
+    iface->clear_attributes = xfdesktop_icon_view_cell_clear_attributes;
+    iface->reorder = xfdesktop_icon_view_cell_reorder;
+    iface->get_cells = xfdesktop_icon_view_cell_get_cells;
 }
 
 static void
