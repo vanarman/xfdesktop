@@ -1341,11 +1341,14 @@ xfdesktop_settings_launch(GtkWidget *w,
     gchar *cmd;
     GError *error = NULL;
 
-    cmd = g_find_program_in_path("xfdesktop-settings");
+    cmd = g_find_program_in_path("xfce4-display-settings");
     if(!cmd)
-        cmd = g_strdup(BINDIR "/xfdesktop-settings");
+        cmd = g_strdup(BINDIR "/xfce4-display-settings");
+    // cmd = g_find_program_in_path("xfdesktop-settings");
+    // if(!cmd)
+    //     cmd = g_strdup(BINDIR "/xfdesktop-settings");
 
-    if(!xfce_spawn_command_line_on_screen(fmanager->priv->gscreen, cmd, FALSE, TRUE, &error)) {
+    if(!xfce_spawn_command_line_on_screen(NULL, cmd, FALSE, TRUE, &error)) {
         GtkWidget *toplevel = gtk_widget_get_toplevel(GTK_WIDGET(fmanager->priv->icon_view));
         /* printf is to be translator-friendly */
         gchar *primary = g_strdup_printf(_("Unable to launch \"%s\":"), cmd);
@@ -1431,9 +1434,9 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
         } else if(info) {
             if(g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
                 img = gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_MENU);
-                if(file_icon == fmanager->priv->desktop_icon)
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Open in New Window"), img);
-                else
+                if(file_icon != fmanager->priv->desktop_icon)
+                //     mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Open in New Window"), img);
+                // else
                     mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Open"), img);
                 gtk_widget_show(mi);
                 gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
@@ -1443,39 +1446,39 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
                                  : G_CALLBACK(xfdesktop_file_icon_menu_open_folder),
                                  fmanager);
 
-                mi = gtk_separator_menu_item_new();
-                gtk_widget_show(mi);
-                gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                // mi = gtk_separator_menu_item_new();
+                // gtk_widget_show(mi);
+                // gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
 
                 if(file_icon == fmanager->priv->desktop_icon) {
                     GIcon *icon;
 
                     /* create launcher item */
 
-                    icon = g_themed_icon_new("application-x-executable");
-                    img = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_MENU);
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Create _Launcher..."), img);
-                    g_object_set_data(G_OBJECT(mi), "xfdesktop-launcher-type", "Application");
-                    gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                    gtk_widget_show(mi);
+                    // icon = g_themed_icon_new("application-x-executable");
+                    // img = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_MENU);
+                    // mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Create _Launcher..."), img);
+                    // g_object_set_data(G_OBJECT(mi), "xfdesktop-launcher-type", "Application");
+                    // gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                    // gtk_widget_show(mi);
 
-                    g_signal_connect(G_OBJECT(mi), "activate",
-                                     G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
-                                     fmanager);
+                    // g_signal_connect(G_OBJECT(mi), "activate",
+                    //                  G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
+                    //                  fmanager);
 
 
                     /* create link item */
 
-                    icon = g_themed_icon_new("insert-link");
-                    img = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_MENU);
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Create _URL Link..."), img);
-                    g_object_set_data(G_OBJECT(mi), "xfdesktop-launcher-type", "Link");
-                    gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                    gtk_widget_show(mi);
+                    // icon = g_themed_icon_new("insert-link");
+                    // img = gtk_image_new_from_gicon(icon, GTK_ICON_SIZE_MENU);
+                    // mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Create _URL Link..."), img);
+                    // g_object_set_data(G_OBJECT(mi), "xfdesktop-launcher-type", "Link");
+                    // gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                    // gtk_widget_show(mi);
 
-                    g_signal_connect(G_OBJECT(mi), "activate",
-                                     G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
-                                     fmanager);
+                    // g_signal_connect(G_OBJECT(mi), "activate",
+                    //                  G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
+                    //                  fmanager);
 
 
                     /* create folder item */
@@ -1517,21 +1520,21 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
                                                                         FALSE);
                         }
 
-                        if(!gtk_container_get_children((GtkContainer*) tmpl_menu)) {
-                            img = gtk_image_new_from_icon_name("", GTK_ICON_SIZE_MENU);
-                            mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("No templates installed"), img);
-                            gtk_widget_set_sensitive(mi, FALSE);
-                            gtk_widget_show(mi);
-                            gtk_menu_shell_append(GTK_MENU_SHELL(tmpl_menu), mi);
-                        }
+                        // if(!gtk_container_get_children((GtkContainer*) tmpl_menu)) {
+                        //     img = gtk_image_new_from_icon_name("", GTK_ICON_SIZE_MENU);
+                        //     mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("No templates installed"), img);
+                        //     gtk_widget_set_sensitive(mi, FALSE);
+                        //     gtk_widget_show(mi);
+                        //     gtk_menu_shell_append(GTK_MENU_SHELL(tmpl_menu), mi);
+                        // }
 
                         if(templates_dir)
                             g_object_unref(templates_dir);
                         g_object_unref(home_dir);
 
-                        mi = gtk_separator_menu_item_new();
-                        gtk_widget_show(mi);
-                        gtk_menu_shell_append(GTK_MENU_SHELL(tmpl_menu), mi);
+                        // mi = gtk_separator_menu_item_new();
+                        // gtk_widget_show(mi);
+                        // gtk_menu_shell_append(GTK_MENU_SHELL(tmpl_menu), mi);
 
                         /* add the "Empty File" template option */
                         img = gtk_image_new_from_icon_name("text-x-generic", GTK_ICON_SIZE_MENU);
@@ -1548,40 +1551,40 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
                     }
                 }
             } else {
-                if(xfdesktop_file_utils_file_is_executable(info)) {
-                    img = gtk_image_new_from_icon_name("system-run", GTK_ICON_SIZE_MENU);
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Execute"), img);
-                    gtk_widget_show(mi);
-                    gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                // if(xfdesktop_file_utils_file_is_executable(info)) {
+                //     img = gtk_image_new_from_icon_name("system-run", GTK_ICON_SIZE_MENU);
+                //     mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Execute"), img);
+                //     gtk_widget_show(mi);
+                //     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
 
-                    g_signal_connect(G_OBJECT(mi), "activate",
-                                     G_CALLBACK(xfdesktop_file_icon_menu_executed),
-                                     fmanager);
+                //     g_signal_connect(G_OBJECT(mi), "activate",
+                //                      G_CALLBACK(xfdesktop_file_icon_menu_executed),
+                //                      fmanager);
 
-                    mi = gtk_separator_menu_item_new();
-                    gtk_widget_show(mi);
-                    gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                //     mi = gtk_separator_menu_item_new();
+                //     gtk_widget_show(mi);
+                //     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
 
-                    if(g_content_type_equals(g_file_info_get_content_type(info),
-                                             "application/x-desktop"))
-                    {
-                        GFile *file = xfdesktop_file_icon_peek_file(file_icon);
+                //     if(g_content_type_equals(g_file_info_get_content_type(info),
+                //                              "application/x-desktop"))
+                //     {
+                //         GFile *file = xfdesktop_file_icon_peek_file(file_icon);
 
-                        img = gtk_image_new_from_icon_name("gtk-edit", GTK_ICON_SIZE_MENU);
-                        mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Edit Launcher"), img);
-                        g_object_set_data_full(G_OBJECT(mi), "file",
-                                               g_object_ref(file), g_object_unref);
-                        gtk_widget_show(mi);
-                        gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                        g_signal_connect(G_OBJECT(mi), "activate",
-                                         G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
-                                         fmanager);
+                //         img = gtk_image_new_from_icon_name("gtk-edit", GTK_ICON_SIZE_MENU);
+                //         mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("_Edit Launcher"), img);
+                //         g_object_set_data_full(G_OBJECT(mi), "file",
+                //                                g_object_ref(file), g_object_unref);
+                //         gtk_widget_show(mi);
+                //         gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                //         g_signal_connect(G_OBJECT(mi), "activate",
+                //                          G_CALLBACK(xfdesktop_file_icon_menu_create_launcher),
+                //                          fmanager);
 
-                        mi = gtk_separator_menu_item_new();
-                        gtk_widget_show(mi);
-                        gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                    }
-                }
+                //         mi = gtk_separator_menu_item_new();
+                //         gtk_widget_show(mi);
+                //         gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                //     }
+                // }
 
                 app_infos = g_app_info_get_all_for_type(g_file_info_get_content_type(info));
                 if(app_infos) {
@@ -1653,27 +1656,27 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
                         }
                     }
 
-                    img = gtk_image_new_from_icon_name("", GTK_ICON_SIZE_MENU);
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Open With Other _Application..."), img);
-                    gtk_widget_show(mi);
-                    if(list_len >= 3)
-                        gtk_menu_shell_append(GTK_MENU_SHELL(app_infos_menu), mi);
-                    else
-                        gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                    g_signal_connect(G_OBJECT(mi), "activate",
-                                     G_CALLBACK(xfdesktop_file_icon_menu_other_app),
-                                     fmanager);
+                    // img = gtk_image_new_from_icon_name("", GTK_ICON_SIZE_MENU);
+                    // mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Open With Other _Application..."), img);
+                    // gtk_widget_show(mi);
+                    // if(list_len >= 3)
+                    //     gtk_menu_shell_append(GTK_MENU_SHELL(app_infos_menu), mi);
+                    // else
+                    //     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                    // g_signal_connect(G_OBJECT(mi), "activate",
+                    //                  G_CALLBACK(xfdesktop_file_icon_menu_other_app),
+                    //                  fmanager);
 
                     /* free the app info list */
                     g_list_free(app_infos);
-                } else {
-                    img = gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_MENU);
-                    mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Open With Other _Application..."), img);
-                    gtk_widget_show(mi);
-                    gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-                    g_signal_connect(G_OBJECT(mi), "activate",
-                                     G_CALLBACK(xfdesktop_file_icon_menu_other_app),
-                                     fmanager);
+                // } else {
+                //     img = gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_MENU);
+                //     mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("Open With Other _Application..."), img);
+                //     gtk_widget_show(mi);
+                //     gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+                //     g_signal_connect(G_OBJECT(mi), "activate",
+                //                      G_CALLBACK(xfdesktop_file_icon_menu_other_app),
+                //                      fmanager);
                 }
 
                 mi = gtk_separator_menu_item_new();
@@ -1870,25 +1873,25 @@ xfdesktop_file_icon_manager_populate_context_menu(XfceDesktop *desktop,
                              G_CALLBACK(xfdesktop_settings_launch), fmanager);
 
             /* Separator */
-            mi = gtk_separator_menu_item_new();
-            gtk_widget_show(mi);
-            gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+            // mi = gtk_separator_menu_item_new();
+            // gtk_widget_show(mi);
+            // gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
         }
 
         /* Properties - applies to desktop window or an icon on the desktop */
-        img = gtk_image_new_from_icon_name("document-properties", GTK_ICON_SIZE_MENU);
-        mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("P_roperties..."), img);
-        gtk_widget_show(mi);
-        gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
-        if(multi_sel || !info)
-            gtk_widget_set_sensitive(mi, FALSE);
-        else {
-            g_signal_connect(G_OBJECT(mi), "activate",
-                             file_icon == fmanager->priv->desktop_icon
-                             ? G_CALLBACK(xfdesktop_file_icon_manager_desktop_properties)
-                             : G_CALLBACK(xfdesktop_file_icon_menu_properties),
-                             fmanager);
-        }
+        // img = gtk_image_new_from_icon_name("document-properties", GTK_ICON_SIZE_MENU);
+        // mi = xfdesktop_menu_create_menu_item_with_mnemonic(_("P_roperties..."), img);
+        // gtk_widget_show(mi);
+        // gtk_menu_shell_append(GTK_MENU_SHELL(menu), mi);
+        // if(multi_sel || !info)
+        //     gtk_widget_set_sensitive(mi, FALSE);
+        // else {
+        //     g_signal_connect(G_OBJECT(mi), "activate",
+        //                      file_icon == fmanager->priv->desktop_icon
+        //                      ? G_CALLBACK(xfdesktop_file_icon_manager_desktop_properties)
+        //                      : G_CALLBACK(xfdesktop_file_icon_menu_properties),
+        //                      fmanager);
+        // }
     }
 
     /* don't free |selected|.  the menu deactivated handler does that */
