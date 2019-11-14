@@ -1,6 +1,19 @@
 README for xfdesktop
 ================================
 
+BUILD INSTRUCTION (Fedora 31)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install required packages for build:
+```
+[user@localhost]$ dnf -y install xfce4-dev-tools libxfce4util libxfce4util-devel xfconf libxfce4ui libxfce4ui-devel libxfce4panel libxfce4panel-devel libwnck3 libwnck3-devel garcon garcon-devel exo exo-devel thunar libtool xorg-x11-server-devel gtk3-devel
+```
+
+In order to build Xfce4-desktop for local user only run fllowing command:
+```
+[user@localhost]$ ./autogen.sh --prefix=$HOME/.local && make && make install
+```
+
 WHAT IS IT?
 ~~~~~~~~~~~
 
